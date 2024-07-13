@@ -1,0 +1,32 @@
+services:
+  storage:
+    image: redis
+    volumes:
+      - ./data:/data
+    networks:
+      - my_network
+  library:
+    image: node:20.10
+    working_dir: /app
+    volumes:
+      - ./library:/app
+    ports:
+      - 3000:3000
+    command: npm start
+    networks:
+      - my_network
+  counter:
+    image: node:20.10
+    working_dir: /app
+    volumes:
+      - ./counter:/app
+    environment:
+      - REDIS_URL=redis://storage
+    ports:
+      - 4000:4000
+    command: npm start
+    networks:
+      - my_network
+networks:
+  my_network:
+    driver: bridge
